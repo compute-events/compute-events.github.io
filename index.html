@@ -20,6 +20,26 @@
       --r: 8px;
     }
 
+    .bg-deco {
+      position: fixed;
+      pointer-events: none;
+      z-index: 0;
+      opacity: .12;
+      user-select: none;
+    }
+    .bg-deco * { animation: none !important; }
+    .bg-deco--1  { width: 300px; top: -40px;    right: -60px;  transform: rotate(10deg);  } /* saucer */
+    .bg-deco--2  { width: 380px; bottom: -90px; left: -110px; transform: rotate(-8deg);  } /* ring */
+    .bg-deco--3  { width: 110px; top: 10%;      left: 2%;     transform: rotate(-12deg); } /* star chart */
+    .bg-deco--4  { width: 130px; top: 52%;      right: 3%;    transform: rotate(18deg);  } /* telescope */
+    .bg-deco--5  { width: 100px; bottom: 18%;   right: 18%;   transform: rotate(-6deg);  } /* orrery */
+    .bg-deco--6  { width: 120px; top: 28%;      left: 1%;     transform: rotate(8deg);   } /* microscope */
+    .bg-deco--7  { width: 90px;  top: 68%;      left: 5%;     transform: rotate(-20deg); } /* flask */
+    .bg-deco--8  { width: 100px; top: 38%;      right: 1%;    transform: rotate(5deg);   } /* compass */
+    .bg-deco--9  { width: 110px; bottom: 8%;    left: 30%;    transform: rotate(12deg);  } /* hexagon */
+    .bg-deco--10 { width: 95px;  top: 80%;      right: 8%;    transform: rotate(-10deg); } /* piechart */
+    .bg-deco--11 { width: 105px; top: 20%;      right: 14%;   transform: rotate(-15deg); } /* connector */
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: var(--bg);
@@ -27,6 +47,7 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      overflow-x: hidden;
     }
 
     /* ── LAYOUT ── */
@@ -242,7 +263,20 @@
 </head>
 <body>
 
-  <div class="page">
+  <!-- background decorations — logo deconstructed as ghost elements -->
+  <img src="assets/deco-saucer.svg"     class="bg-deco bg-deco--1"  aria-hidden="true">
+  <img src="assets/deco-ring.svg"       class="bg-deco bg-deco--2"  aria-hidden="true">
+  <img src="assets/deco-star-chart.svg" class="bg-deco bg-deco--3"  aria-hidden="true">
+  <img src="assets/deco-telescope.svg"  class="bg-deco bg-deco--4"  aria-hidden="true">
+  <img src="assets/deco-orrery.svg"     class="bg-deco bg-deco--5"  aria-hidden="true">
+  <img src="assets/deco-microscope.svg" class="bg-deco bg-deco--6"  aria-hidden="true">
+  <img src="assets/deco-flask.svg"      class="bg-deco bg-deco--7"  aria-hidden="true">
+  <img src="assets/deco-compass.svg"    class="bg-deco bg-deco--8"  aria-hidden="true">
+  <img src="assets/deco-hexagon.svg"    class="bg-deco bg-deco--9"  aria-hidden="true">
+  <img src="assets/deco-piechart.svg"   class="bg-deco bg-deco--10" aria-hidden="true">
+  <img src="assets/deco-connector.svg"  class="bg-deco bg-deco--11" aria-hidden="true">
+
+  <div class="page" style="position:relative;z-index:1">
 
     <header class="site-header">
       <div class="site-header__name">Compute<span>!</span></div>
