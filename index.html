@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compute! Events</title>
+  <meta name="description" content="Community events for people who work with open source computation and data.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f2efe9;
+      --surface: #fff;
+      --dark: #111;
+      --mid: #555;
+      --muted: #999;
+      --gold: #c9a227;
+      --r: 8px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── LAYOUT ── */
+    .page {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 32px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .site-header {
+      padding: 52px 0 40px;
+      border-bottom: 1px solid rgba(0,0,0,.08);
+      margin-bottom: 40px;
+    }
+    .site-header__name {
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -.03em;
+    }
+    .site-header__name span { color: var(--gold); }
+    .site-header__tag {
+      margin-top: 5px;
+      font-size: .9rem;
+      color: var(--mid);
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 48px;
+      flex: 1;
+    }
+
+    /* ── SECTION LABEL ── */
+    .section-label {
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    /* ── EVENT CARDS ── */
+    .events { }
+
+    .event-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--surface);
+      border-radius: var(--r);
+      padding: 14px 16px 14px 20px;
+      margin-bottom: 8px;
+      text-decoration: none;
+      color: var(--dark);
+      border: 1px solid rgba(0,0,0,.07);
+      transition: box-shadow .2s, transform .2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .event-card:hover {
+      box-shadow: 0 4px 20px rgba(0,0,0,.09);
+      transform: translateY(-1px);
+    }
+    .event-card__accent {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+    }
+
+    .event-card__thumb {
+      width: 44px;
+      height: 44px;
+      border-radius: 6px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .event-card__thumb img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+    }
+    .event-card__thumb--paris {
+      background: #14274E;
+    }
+    .event-card__thumb--tba {
+      background: #e0ddd8;
+    }
+
+    .event-card__body { flex: 1; min-width: 0; }
+    .event-card__title {
+      font-size: .95rem;
+      font-weight: 700;
+      letter-spacing: -.01em;
+    }
+    .event-card__meta {
+      font-size: .8rem;
+      color: var(--mid);
+      margin-top: 2px;
+    }
+
+    .event-card__badge {
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 20px;
+      flex-shrink: 0;
+    }
+    .event-card__badge--upcoming { background: #e8f4e8; color: #2a7a2a; }
+    .event-card__badge--tba      { background: #eee; color: var(--muted); }
+    .event-card__badge--past     { background: #f0f0f0; color: var(--muted); }
+
+    .event-card--tba {
+      opacity: .5;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    /* ── MASTODON ── */
+    .mastodon { }
+
+    .mastodon-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .toot {
+      background: var(--surface);
+      border: 1px solid rgba(0,0,0,.07);
+      border-radius: var(--r);
+      padding: 14px 16px;
+    }
+    .toot__header {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 8px;
+    }
+    .toot__avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .toot__author { font-size: .8rem; font-weight: 600; }
+    .toot__handle { font-size: .75rem; color: var(--muted); }
+    .toot__body {
+      font-size: .83rem;
+      color: var(--mid);
+      line-height: 1.55;
+    }
+    .toot__body a { color: #6364ff; text-decoration: none; }
+    .toot__body a:hover { text-decoration: underline; }
+    .toot__body p { margin-bottom: 6px; }
+    .toot__body p:last-child { margin-bottom: 0; }
+    .toot__date { font-size: .72rem; color: var(--muted); margin-top: 7px; }
+
+    .toot--loading, .toot--error {
+      color: var(--muted);
+      font-size: .83rem;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .mastodon-more {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: .78rem;
+      color: var(--muted);
+      text-decoration: none;
+    }
+    .mastodon-more:hover { color: var(--dark); }
+
+    /* ── FOOTER ── */
+    .site-footer {
+      padding: 24px 0;
+      margin-top: 48px;
+      border-top: 1px solid rgba(0,0,0,.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: .75rem;
+      color: var(--muted);
+    }
+    .site-footer a { color: var(--muted); text-decoration: none; margin-left: 18px; }
+    .site-footer a:hover { color: var(--dark); }
+
+    @media (max-width: 760px) {
+      .page { padding: 0 20px; }
+      .site-header { padding: 32px 0 24px; margin-bottom: 28px; }
+      .two-col { grid-template-columns: 1fr; gap: 36px; }
+      .site-footer { flex-direction: column; gap: 10px; }
+      .site-footer a { margin: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page">
+
+    <header class="site-header">
+      <div class="site-header__name">Compute<span>!</span></div>
+      <p class="site-header__tag">Community events for people working with open source computation and data.</p>
+    </header>
+
+    <div class="two-col">
+
+      <!-- LEFT: events -->
+      <div>
+        <p class="section-label">Events</p>
+
+        <a href="paris2026/" class="event-card">
+          <div class="event-card__accent" style="background:#F2C94C"></div>
+          <div class="event-card__thumb event-card__thumb--paris">
+            <img src="./assets/logos/compute_favicon.svg" alt="Compute! Paris 2026">
+          </div>
+          <div class="event-card__body">
+            <div class="event-card__title">Compute! Paris 2026</div>
+            <div class="event-card__meta">Nov 25–26 · Sorbonne Université</div>
+          </div>
+          <span class="event-card__badge event-card__badge--upcoming">Upcoming</span>
+        </a>
+
+        <div class="event-card event-card--tba">
+          <div class="event-card__thumb event-card__thumb--tba"></div>
+          <div class="event-card__body">
+            <div class="event-card__title">Next event</div>
+            <div class="event-card__meta">To be announced</div>
+          </div>
+          <span class="event-card__badge event-card__badge--tba">TBA</span>
+        </div>
+      </div>
+
+      <!-- RIGHT: Mastodon -->
+      <div class="mastodon">
+        <p class="section-label">Latest</p>
+        <div class="mastodon-feed" id="mastodon-feed">
+          <div class="toot toot--loading">Loading…</div>
+        </div>
+      </div>
+
+    </div>
+
+    <footer class="site-footer">
+      <span>© 2026 Compute!</span>
+      <nav>
+        <a href="code-of-conduct.html">Code of Conduct</a>
+        <a href="legal.html">Legal</a>
+      </nav>
+    </footer>
+
+  </div>
+
+  <script>
+    // ── Add Mastodon accounts here — one per event (or the central account) ──
+    const ACCOUNTS = [
+      { acct: 'computeparis', instance: 'mastodon.social' },
+      // future events: { acct: 'computeXXXX', instance: 'mastodon.social' },
+    ];
+
+    async function fetchAccount(acct, instance) {
+      const base = `https://${instance}`;
+      const res = await fetch(`${base}/api/v1/accounts/lookup?acct=${acct}`);
+      if (!res.ok) throw new Error(`Lookup failed for ${acct}@${instance}`);
+      const account = await res.json();
+      const statusRes = await fetch(`${base}/api/v1/accounts/${account.id}/statuses?exclude_replies=true&exclude_reblogs=true&limit=5`);
+      if (!statusRes.ok) throw new Error(`Statuses failed for ${acct}@${instance}`);
+      const statuses = await statusRes.json();
+      return statuses.map(s => ({ ...s, _account: account, _handle: `@${acct}@${instance}` }));
+    }
+
+    async function loadFeed() {
+      const feed = document.getElementById('mastodon-feed');
+      try {
+        const results = await Promise.allSettled(ACCOUNTS.map(a => fetchAccount(a.acct, a.instance)));
+        const allPosts = results
+          .filter(r => r.status === 'fulfilled')
+          .flatMap(r => r.value)
+          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+          .slice(0, 15);
+
+        if (!allPosts.length) {
+          feed.innerHTML = '<div class="toot toot--error">No posts found.</div>';
+          return;
+        }
+
+        feed.innerHTML = allPosts.map(s => {
+          const date = new Date(s.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+          const url = s.url || s.uri;
+          return `
+            <div class="toot">
+              <div class="toot__header">
+                <img class="toot__avatar" src="${s._account.avatar_static}" alt="${s._account.display_name}">
+                <div>
+                  <div class="toot__author">${s._account.display_name}</div>
+                  <div class="toot__handle">${s._handle}</div>
+                </div>
+              </div>
+              <div class="toot__body">${s.content}</div>
+              <a href="${url}" target="_blank" rel="noopener" class="toot__date">${date}</a>
+            </div>`;
+        }).join('');
+      } catch {
+        feed.innerHTML = '<div class="toot toot--error">Could not load posts.</div>';
+      }
+    }
+    loadFeed();
+  </script>
+
+</body>
+</html>
