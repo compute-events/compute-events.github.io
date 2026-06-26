@@ -13,6 +13,7 @@
   <meta property="og:image" content="https://compute.events/assets/og-card.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://compute.events/assets/og-card.png">
+  <link rel="icon" href="./assets/logos/compute_favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Chakra+Petch:wght@700&text=!&display=swap" rel="stylesheet">
   <style>
@@ -36,13 +37,17 @@
       display: flex;
       flex-direction: column;
     }
+    @media (min-width: 901px) {
+      body {
+        background: linear-gradient(to right, #e8e4dc 0%, var(--bg) 22%, #fff 42%, #fff 58%, var(--bg) 78%, #e8e4dc 100%) fixed no-repeat, var(--bg);
+      }
+    }
 
     /* ── LAYOUT ── */
     .page {
       width: 100%;
-      max-width: 1100px;
       margin: 0 auto;
-      padding: 0 32px;
+      padding: 0 24px;
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -52,6 +57,7 @@
       padding: 52px 0 40px;
       border-bottom: 1px solid rgba(0,0,0,.08);
       margin-bottom: 40px;
+      text-align: center;
     }
     .site-header__name {
       font-size: 1.8rem;
@@ -70,12 +76,14 @@
       color: var(--mid);
     }
 
-    .two-col {
+    .three-col {
       display: grid;
-      grid-template-columns: 340px 1fr;
-      gap: 48px;
+      grid-template-columns: 260px 1fr 280px;
+      gap: 64px;
       flex: 1;
     }
+    .three-col > aside { min-width: 0; }
+    .three-col > .manifesto { min-width: 0; }
 
     /* ── SECTION LABEL ── */
     .section-label {
@@ -87,6 +95,63 @@
       margin-bottom: 14px;
     }
 
+    /* ── MANIFESTO ── */
+    .manifesto {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .manifesto h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      margin-bottom: 8px;
+      line-height: 1.25;
+      text-align: center;
+    }
+    .manifesto__lead {
+      font-size: .92rem;
+      color: var(--dark);
+      line-height: 1.65;
+      margin-bottom: 28px;
+    }
+    .manifesto__block {
+      margin-bottom: 24px;
+    }
+    .manifesto__block h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .manifesto__block h3 {
+      font-size: .82rem;
+      font-weight: 700;
+      margin-top: 16px;
+      margin-bottom: 6px;
+      color: var(--mid);
+    }
+    .manifesto__block p {
+      font-size: .88rem;
+      color: #333;
+      line-height: 1.65;
+      margin-bottom: 10px;
+    }
+    .manifesto__block strong { color: var(--dark); }
+    .manifesto__cta {
+      margin-top: 8px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(0,0,0,.08);
+      font-size: .88rem;
+      color: #333;
+      line-height: 1.65;
+    }
+    .manifesto__cta strong { color: var(--dark); }
+    .manifesto__cta a {
+      color: var(--gold);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .manifesto__cta a:hover { text-decoration: underline; }
+
     /* ── EVENT CARDS ── */
     .events { }
 
@@ -94,20 +159,28 @@
       display: flex;
       align-items: center;
       gap: 14px;
-      background: var(--surface);
+      background: rgba(255,255,255,.35);
       border-radius: var(--r);
       padding: 14px 16px 14px 20px;
       margin-bottom: 8px;
       text-decoration: none;
       color: var(--dark);
-      border: 1px solid rgba(0,0,0,.07);
-      transition: box-shadow .2s, transform .2s;
+      border: 1px solid rgba(0,0,0,.05);
+      transition: box-shadow .2s, transform .2s, background .2s;
       position: relative;
       overflow: hidden;
     }
     .event-card:hover {
-      box-shadow: 0 4px 20px rgba(0,0,0,.09);
+      box-shadow: 0 4px 20px rgba(0,0,0,.08);
       transform: translateY(-1px);
+      background: rgba(255,255,255,.6);
+    }
+    .event-card[href] {
+      background: rgba(255,255,255,.55);
+      border-color: rgba(0,0,0,.06);
+    }
+    .event-card[href]:hover {
+      background: var(--surface);
     }
     .event-card__accent {
       position: absolute;
@@ -150,13 +223,14 @@
     }
 
     .event-card__badge {
-      font-size: .65rem;
+      display: inline-block;
+      font-size: .6rem;
       font-weight: 700;
       letter-spacing: .08em;
       text-transform: uppercase;
-      padding: 3px 9px;
+      padding: 2px 8px;
       border-radius: 20px;
-      flex-shrink: 0;
+      margin-top: 6px;
     }
     .event-card__badge--upcoming { background: #e8f4e8; color: #2a7a2a; }
     .event-card__badge--tba      { background: #eee; color: var(--muted); }
@@ -166,6 +240,41 @@
       opacity: .5;
       cursor: default;
       pointer-events: none;
+    }
+
+    /* ── SPONSOR WALL ── */
+    .sponsor-wall {
+      margin-top: 32px;
+    }
+    .sponsor-wall__grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      align-items: center;
+    }
+    .sponsor-wall__logo {
+      background: rgba(255,255,255,.35);
+      border: 1px solid rgba(0,0,0,.05);
+      border-radius: 6px;
+      padding: 10px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 56px;
+      transition: background .2s;
+    }
+    .sponsor-wall__logo:hover {
+      background: rgba(255,255,255,.6);
+    }
+    .sponsor-wall__logo img {
+      max-width: 100%;
+      max-height: 36px;
+      object-fit: contain;
+      opacity: .85;
+      transition: opacity .2s;
+    }
+    .sponsor-wall__logo:hover img {
+      opacity: 1;
     }
 
     /* ── MASTODON ── */
@@ -178,8 +287,8 @@
     }
 
     .toot {
-      background: var(--surface);
-      border: 1px solid rgba(0,0,0,.07);
+      background: rgba(255,255,255,.2);
+      border: 1px solid rgba(0,0,0,.05);
       border-radius: var(--r);
       padding: 14px 16px;
     }
@@ -239,10 +348,21 @@
     .site-footer a { color: var(--muted); text-decoration: none; margin-left: 18px; }
     .site-footer a:hover { color: var(--dark); }
 
+    @media (max-width: 1200px) {
+      .three-col { grid-template-columns: 240px 1fr; gap: 48px; }
+      .three-col > aside:last-child {
+        grid-column: 1 / -1;
+        margin-top: 16px;
+        max-width: 560px;
+      }
+    }
+    @media (max-width: 900px) {
+      .three-col { grid-template-columns: 1fr; gap: 36px; }
+      .three-col > aside:last-child { max-width: none; }
+    }
     @media (max-width: 760px) {
       .page { padding: 0 20px; }
       .site-header { padding: 32px 0 24px; margin-bottom: 28px; }
-      .two-col { grid-template-columns: 1fr; gap: 36px; }
       .site-footer { flex-direction: column; gap: 10px; }
       .site-footer a { margin: 0; }
     }
@@ -263,10 +383,11 @@
       <p class="site-header__tag">Community events for people working with open source computation and data.</p>
     </header>
 
-    <div class="two-col">
+    <div class="three-col">
 
-      <!-- LEFT: events -->
-      <div>
+      <!-- LEFT: Events -->
+      <aside>
+
         <p class="section-label">Events</p>
 
         <a href="paris2026/" class="event-card">
@@ -277,8 +398,8 @@
           <div class="event-card__body">
             <div class="event-card__title">Compute! Paris 2026</div>
             <div class="event-card__meta">Nov 25–26 · Sorbonne Université</div>
+            <span class="event-card__badge event-card__badge--upcoming">Upcoming</span>
           </div>
-          <span class="event-card__badge event-card__badge--upcoming">Upcoming</span>
         </a>
 
         <div class="event-card event-card--tba">
@@ -286,18 +407,101 @@
           <div class="event-card__body">
             <div class="event-card__title">Next event</div>
             <div class="event-card__meta">To be announced</div>
+            <span class="event-card__badge event-card__badge--tba">TBA</span>
           </div>
-          <span class="event-card__badge event-card__badge--tba">TBA</span>
         </div>
+
+        <div class="sponsor-wall">
+          <p class="section-label">Supporters</p>
+          <div class="sponsor-wall__grid">
+            <a href="https://quantstack.net/" class="sponsor-wall__logo" target="_blank" rel="noopener" aria-label="QuantStack">
+              <img src="./assets/images/sponsors/quantstack.png" alt="QuantStack">
+            </a>
+            <a href="https://codra.net/en/software-offering/specific-development/" class="sponsor-wall__logo" target="_blank" rel="noopener" aria-label="CODRA">
+              <img src="./assets/images/sponsors/CODRA_logo.svg" alt="CODRA">
+            </a>
+            <a href="https://www.stat4decision.com/" class="sponsor-wall__logo" target="_blank" rel="noopener" aria-label="Stat4decision">
+              <img src="./assets/images/sponsors/stat4decision_logo.png" alt="Stat4decision">
+            </a>
+            <a href="https://scai.sorbonne-universite.fr/" class="sponsor-wall__logo" target="_blank" rel="noopener" aria-label="SCAI">
+              <img src="./assets/images/sponsors/SCAI_logo.png" alt="SCAI">
+            </a>
+            <a href="https://www.meetup.com/pyladiesparis/" class="sponsor-wall__logo" target="_blank" rel="noopener" aria-label="PyLadies Paris">
+              <img src="./assets/images/sponsors/PyLadies_Paris_logo.png" alt="PyLadies Paris">
+            </a>
+            <a href="https://www.meetup.com/rladies-paris/" class="sponsor-wall__logo" target="_blank" rel="noopener" aria-label="R-Ladies Paris">
+              <img src="./assets/images/sponsors/R_Ladies_Paris_logo.png" alt="R-Ladies Paris">
+            </a>
+            <a href="https://systematic-paris-region.org/?lang=en" class="sponsor-wall__logo" target="_blank" rel="noopener" aria-label="Systematic Paris-Region">
+              <img src="./assets/images/sponsors/Systematic_logo.png" alt="Systematic Paris-Region">
+            </a>
+          </div>
+        </div>
+
+      </aside>
+
+      <!-- CENTER: Manifesto -->
+      <div class="manifesto" id="manifesto">
+        <p class="section-label">Manifesto</p>
+        <h1>Open Science and Engineering for an Open World</h1>
+        <p class="manifesto__lead">Compute! is a conference series dedicated to open-source software for machine learning, AI, data, and scientific computing. We unite maintainers, researchers, engineers, and practitioners who build, use, and depend on open tools to advance discovery, understanding, and technical computing in both academia and industry.</p>
+
+        <div class="manifesto__block">
+          <h2>Why Open Source Matters in Science and Engineering</h2>
+          <h3>A Fundamental Contradiction</h3>
+          <p>Science aims to understand the world, yet it often depends on tools that are closed, opaque, or restricted. It is a contradiction to seek knowledge with tools we are not allowed to understand. This is why the open-source movement is even more critical for science than for other fields: transparency and reproducibility are not optional — they are the foundation of progress.</p>
+          <h3>The Power of Open Collaboration</h3>
+          <p>Solutions to the most pressing challenges in science emerge when disciplines and communities work <strong>in the open</strong>. The open-source collaboration model is not just effective — it is the most powerful way to innovate, share knowledge, and build trust. By removing barriers, we accelerate progress and ensure that the best ideas rise to the top.</p>
+        </div>
+
+        <div class="manifesto__block">
+          <h2>No Single Point of Control</h2>
+          <h3>Why Decentralisation Matters</h3>
+          <p>Open-source thrives when it is free from the constraints of centralization. Concentrated control — whether in governance, infrastructure, or decision-making — creates bottlenecks, excludes voices, and stifles innovation. Decentralisation ensures that open-source projects remain resilient and adaptable, <strong>allowing communities to make decisions in a sovereign and autonomous fashion</strong>.</p>
+          <h3>A Grassroots Movement</h3>
+          <p>Compute! is built from the ground up. Every chapter, every event, and every contribution is driven by the people who use and believe in these tools. This is not just a principle; it is a necessity for a movement that seeks to empower scientists, engineers, and practitioners everywhere.</p>
+          <h3>Breaking Geographical and Institutional Barriers</h3>
+          <p>The future of open-source cannot be tied to a single country, foundation, or institution. By distributing leadership, resources, and decision-making, we ensure that <strong>no one region or entity holds disproportionate influence</strong>. This is how we build a truly <strong>equitable</strong> and sustainable ecosystem.</p>
+        </div>
+
+        <div class="manifesto__block">
+          <h2>Compute! Anywhere, Openly</h2>
+          <p>Compute! events can be organized in <strong>any city</strong>, as long as the organizers commit to our principles of an <strong>openly run conference</strong>.</p>
+          <p>Compute! is not about a single programming language or technology. The shared challenges of scientific computing trump these boundaries. Whether you work in R, Python, C++, or Rust, use Jupyter or RStudio, or focus on package management or shared data formats, Compute! is a space for you. Our focus is on the common questions we all face: How do we collect, process, trust, and make sense of data?</p>
+          <p>On the Compute! Conference series, we welcome content that primarily focuses on the development or intensive use of open source tools for scientific, educational and industry purposes. We accept talks around scientific computation, data analytics, data visualization, data engineering, machine learning, and related fields. We do not accept product sales pitches.</p>
+        </div>
+
+        <div class="manifesto__block">
+          <h2>Our Vision: A Global Grassroots Movement</h2>
+          <p>Our goal is for Compute! to grow as a <strong>grassroots movement</strong>. We are already connected with groups around the world to see chapters form in new cities. Our vision is simple:</p>
+          <p><strong>To create a global community where open-source scientific computing thrives, where challenges are tackled together, and where everyone has a voice.</strong></p>
+          <p>Together, we have seen how the best ideas and tools emerge when we, as a community, take the lead, ask the tough questions, and build solutions with <strong>openness and collaboration at the core.</strong></p>
+        </div>
+
+        <div class="manifesto__block">
+          <h2>An Inclusive and Welcoming Community</h2>
+          <p>Compute! is for everyone. We actively welcome participants of all backgrounds, identities, and experience levels, whether you are a student, researcher, maintainer, educator, or industry practitioner. Our community thrives on diversity of thought, geography, discipline, and perspective. We are committed to creating a <strong>safe, respectful, and accessible</strong> environment for all.</p>
+        </div>
+
+        <div class="manifesto__block">
+          <h2>Community Tracks</h2>
+          <p>Compute! is a big tent for the open-source scientific ecosystem. We embrace communities across languages and tools — R, Python, C++, Rust, and beyond. Our events are designed to foster cross-pollination, whether through side tracks, Birds of a Feather (BoF) sessions, or companion events. If your project or community aligns with our mission, we'll find a way to include you. Together, we're stronger.</p>
+        </div>
+
+        <p class="manifesto__cta">
+          Compute! is more than a conference, it is a movement. <strong>The first edition takes place in Paris on November 25 &amp; 26, 2026.</strong> If you wish to organise a local chapter of Compute!, feel free to reach out to us at <a href="mailto:paris@compute.events">paris@compute.events</a>.
+        </p>
       </div>
 
-      <!-- RIGHT: Mastodon -->
-      <div class="mastodon">
-        <p class="section-label">Latest</p>
-        <div class="mastodon-feed" id="mastodon-feed">
-          <div class="toot toot--loading">Loading…</div>
+      <!-- RIGHT: Latest posts -->
+      <aside>
+        <div class="mastodon">
+          <p class="section-label">Latest posts</p>
+          <div class="mastodon-feed" id="mastodon-feed">
+            <div class="toot toot--loading">Loading…</div>
+          </div>
         </div>
-      </div>
+      </aside>
 
     </div>
 
