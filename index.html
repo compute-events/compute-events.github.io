@@ -84,6 +84,7 @@
     }
     .three-col > aside { min-width: 0; }
     .three-col > .manifesto { min-width: 0; }
+    .sidebar-left { display: flex; flex-direction: column; }
 
     /* ── SECTION LABEL ── */
     .section-label {
@@ -91,6 +92,7 @@
       font-weight: 700;
       letter-spacing: .12em;
       text-transform: uppercase;
+      text-align: center;
       color: var(--muted);
       margin-bottom: 14px;
     }
@@ -243,9 +245,7 @@
     }
 
     /* ── SPONSOR WALL ── */
-    .sponsor-wall {
-      margin-top: 32px;
-    }
+    .sponsor-wall { margin-top: 32px; }
     .sponsor-wall__grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -350,15 +350,15 @@
 
     @media (max-width: 1200px) {
       .three-col { grid-template-columns: 240px 1fr; gap: 48px; }
-      .three-col > aside:last-child {
-        grid-column: 1 / -1;
-        margin-top: 16px;
-        max-width: 560px;
-      }
+      .three-col > aside:last-of-type { grid-column: 1 / -1; margin-top: 16px; max-width: 560px; }
     }
     @media (max-width: 900px) {
-      .three-col { grid-template-columns: 1fr; gap: 36px; }
-      .three-col > aside:last-child { max-width: none; }
+      .three-col { display: flex; flex-direction: column; gap: 36px; }
+      .sidebar-left { display: contents; }
+      .events-block   { order: 1; }
+      .manifesto      { order: 2; }
+      .sponsor-wall   { order: 3; max-width: none; }
+      .sidebar-right  { order: 4; max-width: none; }
     }
     @media (max-width: 760px) {
       .page { padding: 0 20px; }
@@ -380,34 +380,36 @@
 
     <header class="site-header">
       <div class="site-header__name">Compute<span>!</span></div>
-      <p class="site-header__tag">Community events for people working with open source computation and data.</p>
+      <p class="site-header__tag">A grassroots movement promoting open source tools for data, science and engineering.</p>
     </header>
 
     <div class="three-col">
 
-      <!-- LEFT: Events -->
-      <aside>
+      <!-- LEFT: Events + Supporters -->
+      <aside class="sidebar-left">
 
-        <p class="section-label">Events</p>
+        <div class="events-block">
+          <p class="section-label">Events</p>
 
-        <a href="paris2026/" class="event-card">
-          <div class="event-card__accent" style="background:#F2C94C"></div>
-          <div class="event-card__thumb event-card__thumb--paris">
-            <img src="./assets/logos/compute_favicon.svg" alt="Compute! Paris 2026">
-          </div>
-          <div class="event-card__body">
-            <div class="event-card__title">Compute! Paris 2026</div>
-            <div class="event-card__meta">Nov 25–26 · Sorbonne Université</div>
-            <span class="event-card__badge event-card__badge--upcoming">Upcoming</span>
-          </div>
-        </a>
+          <a href="paris2026/" class="event-card">
+            <div class="event-card__accent" style="background:#F2C94C"></div>
+            <div class="event-card__thumb event-card__thumb--paris">
+              <img src="./assets/logos/compute_favicon.svg" alt="Compute! Paris 2026">
+            </div>
+            <div class="event-card__body">
+              <div class="event-card__title">Compute! Paris 2026</div>
+              <div class="event-card__meta">Nov 25–26 · Sorbonne Université</div>
+              <span class="event-card__badge event-card__badge--upcoming">Upcoming</span>
+            </div>
+          </a>
 
-        <div class="event-card event-card--tba">
-          <div class="event-card__thumb event-card__thumb--tba"></div>
-          <div class="event-card__body">
-            <div class="event-card__title">Next event</div>
-            <div class="event-card__meta">To be announced</div>
-            <span class="event-card__badge event-card__badge--tba">TBA</span>
+          <div class="event-card event-card--tba">
+            <div class="event-card__thumb event-card__thumb--tba"></div>
+            <div class="event-card__body">
+              <div class="event-card__title">Next event</div>
+              <div class="event-card__meta">To be announced</div>
+              <span class="event-card__badge event-card__badge--tba">TBA</span>
+            </div>
           </div>
         </div>
 
@@ -494,7 +496,7 @@
       </div>
 
       <!-- RIGHT: Latest posts -->
-      <aside>
+      <aside class="sidebar-right">
         <div class="mastodon">
           <p class="section-label">Latest posts</p>
           <div class="mastodon-feed" id="mastodon-feed">
