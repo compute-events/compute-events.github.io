@@ -11,7 +11,7 @@ Science aims to understand the world, yet it often depends on tools that are clo
 Solutions to the most pressing challenges in science emerge when disciplines and communities work in the open. The open-source collaboration model is not just effective; it is the most powerful way to innovate, share knowledge, and build trust. By removing barriers, we accelerate progress and ensure that the best ideas rise to the top.
 
 ### The Compute Layer in the Age of AI
-AI is reshaping how software is written and how it reaches its users. Compute! stands for the perspective that this shift makes the open computational layer *more* important, not less. It is a counter perspective to pervasive blackbox narratives. We believe AI is at its most powerful and most steerable when it operates on tools whose semantics are well understood and inspectable in code. That is the open source computational layer this conference is about.
+AI is reshaping how software is written and how it reaches its users. This shift makes the open computational layer *more* important, not less, counter to pervasive blackbox narratives. We believe AI is at its most powerful and most steerable when it operates on tools whose semantics are well understood and inspectable in code. That is the open source computational layer this conference is about.
 
 ## No Single Point of Control
 ### Why Decentralisation Matters
