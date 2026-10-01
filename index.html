@@ -82,9 +82,10 @@
       gap: 64px;
       flex: 1;
     }
-    .three-col > aside { min-width: 0; }
-    .three-col > .manifesto { min-width: 0; }
-    .sidebar-left { display: flex; flex-direction: column; }
+    .side-col { display: contents; }
+    .sidebar-left { grid-row: 1; grid-column: 1; display: flex; flex-direction: column; min-width: 0; }
+    .manifesto { grid-row: 1; grid-column: 2; min-width: 0; }
+    .sidebar-right { grid-row: 1; grid-column: 3; min-width: 0; }
 
     /* ── SECTION LABEL ── */
     .section-label {
@@ -350,15 +351,17 @@
 
     @media (max-width: 1200px) {
       .three-col { grid-template-columns: 240px 1fr; gap: 48px; }
-      .three-col > aside:last-of-type { grid-column: 1 / -1; margin-top: 16px; max-width: 560px; }
+      .side-col { display: block; }
+      .sidebar-right { margin-top: 32px; }
     }
     @media (max-width: 900px) {
       .three-col { display: flex; flex-direction: column; gap: 36px; }
+      .side-col { display: contents; }
       .sidebar-left { display: contents; }
       .events-block   { order: 1; }
       .manifesto      { order: 2; }
-      .sponsor-wall   { order: 3; max-width: none; }
-      .sidebar-right  { order: 4; max-width: none; }
+      .sponsor-wall   { order: 3; }
+      .sidebar-right  { order: 4; margin-top: 0; }
     }
     @media (max-width: 760px) {
       .page { padding: 0 20px; }
@@ -384,6 +387,9 @@
     </header>
 
     <div class="three-col">
+
+      <!-- SIDES: Events + Supporters, Latest posts -->
+      <div class="side-col">
 
       <!-- LEFT: Events + Supporters -->
       <aside class="sidebar-left">
@@ -448,6 +454,18 @@
 
       </aside>
 
+      <!-- RIGHT: Latest posts -->
+      <aside class="sidebar-right">
+        <div class="mastodon">
+          <p class="section-label">Latest posts</p>
+          <div class="mastodon-feed" id="mastodon-feed">
+            <div class="toot toot--loading">Loading…</div>
+          </div>
+        </div>
+      </aside>
+
+      </div>
+
       <!-- CENTER: Manifesto -->
       <div class="manifesto" id="manifesto">
         <p class="section-label">Manifesto</p>
@@ -501,16 +519,6 @@
         </p>
       </div>
 
-      <!-- RIGHT: Latest posts -->
-      <aside class="sidebar-right">
-        <div class="mastodon">
-          <p class="section-label">Latest posts</p>
-          <div class="mastodon-feed" id="mastodon-feed">
-            <div class="toot toot--loading">Loading…</div>
-          </div>
-        </div>
-      </aside>
-
     </div>
 
     <footer class="site-footer">
@@ -530,48 +538,86 @@
       // future events: { acct: 'computeXXXX', instance: 'mastodon.social' },
     ];
 
+    function escapeHTML(str) {
+      return String(str ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
     async function fetchAccount(acct, instance) {
       const base = `https://${instance}`;
       const res = await fetch(`${base}/api/v1/accounts/lookup?acct=${acct}`);
       if (!res.ok) throw new Error(`Lookup failed for ${acct}@${instance}`);
       const account = await res.json();
-      const statusRes = await fetch(`${base}/api/v1/accounts/${account.id}/statuses?exclude_replies=true&exclude_reblogs=true&limit=5`);
+      const statusRes = await fetch(`${base}/api/v1/accounts/${account.id}/statuses?exclude_replies=false&exclude_reblogs=true&limit=10`);
       if (!statusRes.ok) throw new Error(`Statuses failed for ${acct}@${instance}`);
       const statuses = await statusRes.json();
-      return statuses.map(s => ({ ...s, _account: account, _handle: `@${acct}@${instance}` }));
+      // Keep top-level posts and self-replies (thread continuations); drop replies to other accounts.
+      return statuses
+        .filter(s => !s.in_reply_to_id || s.in_reply_to_account_id === account.id)
+        .map(s => ({ ...s, _account: account, _handle: `@${acct}@${instance}` }));
+    }
+
+    // ── Group an account's self-reply chains into thread units ──
+    function buildThreads(statuses) {
+      const byId = new Map(statuses.map(s => [s.id, s]));
+      const rootOf = new Map();
+      function findRoot(s) {
+        if (rootOf.has(s.id)) return rootOf.get(s.id);
+        const parent = byId.get(s.in_reply_to_id);
+        const root = parent ? findRoot(parent) : s;
+        rootOf.set(s.id, root);
+        return root;
+      }
+
+      const units = new Map(); // root id -> { root, replies (oldest first), latest }
+      for (const s of statuses) {
+        const root = findRoot(s);
+        if (!units.has(root.id)) units.set(root.id, { root, replies: [], latest: 0 });
+        const unit = units.get(root.id);
+        if (s !== root) unit.replies.push(s);
+        const t = new Date(s.created_at).getTime();
+        if (t > unit.latest) unit.latest = t;
+      }
+      for (const unit of units.values()) {
+        unit.replies.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+      }
+      return [...units.values()];
+    }
+
+    function tootHTML(unit) {
+      const s = unit.root;
+      const date = new Date(s.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      const url = s.url || s.uri;
+      const body = [s.content, ...unit.replies.map(r => r.content)].join('\n');
+      return `
+        <div class="toot">
+          <div class="toot__header">
+            <img class="toot__avatar" src="${s._account.avatar_static}" alt="${escapeHTML(s._account.display_name)}">
+            <div>
+              <div class="toot__author">${escapeHTML(s._account.display_name)}</div>
+              <div class="toot__handle">${s._handle}</div>
+            </div>
+          </div>
+          <div class="toot__body">${body}</div>
+          <a href="${url}" target="_blank" rel="noopener" class="toot__date">${date}</a>
+        </div>`;
     }
 
     async function loadFeed() {
       const feed = document.getElementById('mastodon-feed');
       try {
         const results = await Promise.allSettled(ACCOUNTS.map(a => fetchAccount(a.acct, a.instance)));
-        const allPosts = results
+        const units = results
           .filter(r => r.status === 'fulfilled')
-          .flatMap(r => r.value)
-          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+          .flatMap(r => buildThreads(r.value))
+          .sort((a, b) => b.latest - a.latest)
           .slice(0, 15);
 
-        if (!allPosts.length) {
+        if (!units.length) {
           feed.innerHTML = '<div class="toot toot--error">No posts found.</div>';
           return;
         }
 
-        feed.innerHTML = allPosts.map(s => {
-          const date = new Date(s.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-          const url = s.url || s.uri;
-          return `
-            <div class="toot">
-              <div class="toot__header">
-                <img class="toot__avatar" src="${s._account.avatar_static}" alt="${s._account.display_name}">
-                <div>
-                  <div class="toot__author">${s._account.display_name}</div>
-                  <div class="toot__handle">${s._handle}</div>
-                </div>
-              </div>
-              <div class="toot__body">${s.content}</div>
-              <a href="${url}" target="_blank" rel="noopener" class="toot__date">${date}</a>
-            </div>`;
-        }).join('');
+        feed.innerHTML = units.map(tootHTML).join('');
       } catch {
         feed.innerHTML = '<div class="toot toot--error">Could not load posts.</div>';
       }
