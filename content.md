@@ -64,9 +64,9 @@ A Compute! event has particular characteristics that define it, wherever it happ
 
 - **Honest about commerce.** Open source and healthy commerce, including closed source approaches, can coexist. Companies that build on open infrastructure and contribute to it, are welcome to also showcase their products in dedicated, transparent and balanced formats. What's not welcome is treating open source and the work that goes into it as free raw material to extract from, or dressing sales pitches as talks.
 
-- **Honest about maintenance.** Maintenance is work. The people who keep the software running deserve to be recognised, supported, and paid. Sustainable funding and employment for maintainers are part of the programme, not a side issue.
+- **Honest about maintenance.** Maintenance is work. The people who keep the software running deserve to be recognised, supported, and paid. Talks about sustainable funding and employment for maintainers are welcome on the programme, not treated as a side issue.
 
-- **AI: opportunities and risks.** Our standpoint on AI is positive on opportunities but wary of risks. Where AI expands people's understanding and agency, we welcome talks using AI or directly about it. We're critical where it overly concentrates power, takes away ownership, locks in or obscures, contrary to the open source spirit and values described above.
+- **AI: opportunities and risks.** Our standpoint on AI is positive on opportunities and attentive to risks. Where AI expands people's understanding and agency, we welcome talks using AI or directly about it. We're critical where it overly concentrates power, takes away ownership, locks in or obscures, contrary to the open source spirit and values described above.
 
 - **Inclusive.** Compute! is open to everyone regardless of background or identity. We aim for an interesting balance of seniority, welcoming all experience levels and recognising their contributions. A safe, respectful, and accessible environment is non-negotiable. See the [Code of Conduct](code-of-conduct.html).
 
