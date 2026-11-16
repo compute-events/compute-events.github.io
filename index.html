@@ -287,6 +287,7 @@
     }
     .event-card__badge--upcoming { background: #e8f4e8; color: #2a7a2a; }
     .event-card__badge--tba      { background: #eee; color: var(--muted); }
+    .event-card__badge--discussion { background: #fdf3d8; color: #8a6d1a; }
     .event-card__badge--past     { background: #f0f0f0; color: var(--muted); }
 
     .event-card--tba {
@@ -455,26 +456,17 @@
         <div class="events-block">
           <p class="section-label">Events</p>
 
-          <a href="https://luma.com/s4x2g5xf" class="event-card" target="_blank" rel="noopener">
-            <div class="event-card__accent" style="background:#F2C94C"></div>
-            <div class="event-card__thumb event-card__thumb--paris">
-              <img src="./assets/logos/compute_favicon.svg" alt="Compute! Karlsruhe #1">
-            </div>
-            <div class="event-card__body">
-              <div class="event-card__title">Compute! Karlsruhe #1</div>
-              <div class="event-card__meta">Nov 12 · Blue Yonder, Karlsruhe</div>
-              <span class="event-card__badge event-card__badge--upcoming">Upcoming</span>
-            </div>
-          </a>
-
-          <a href="paris2026/" class="event-card">
+          <!-- data-end: last day of the event (YYYY-MM-DD). A script sets the Upcoming/Past
+               badge and orders the cards from it, so new events can be added in any order.
+               Leave data-end out for an event whose date isn't set yet: it shows as "In discussion". -->
+          <a href="paris2026/" class="event-card" data-end="2026-11-26">
             <div class="event-card__accent" style="background:#F2C94C"></div>
             <div class="event-card__thumb event-card__thumb--paris">
               <img src="./assets/logos/compute_favicon.svg" alt="Compute! Paris 2026">
             </div>
             <div class="event-card__body">
               <div class="event-card__title">Compute! Paris 2026</div>
-              <div class="event-card__meta">Nov 25–26 · Sorbonne Université</div>
+              <div class="event-card__meta">Nov 25–26 · Hôtel du Port, Paris</div>
               <span class="event-card__badge event-card__badge--upcoming">Upcoming</span>
             </div>
           </a>
@@ -487,6 +479,18 @@
               <span class="event-card__badge event-card__badge--tba">TBA</span>
             </div>
           </div>
+
+          <a href="https://luma.com/s4x2g5xf" class="event-card" data-end="2026-11-12" target="_blank" rel="noopener">
+            <div class="event-card__accent" style="background:#F2C94C"></div>
+            <div class="event-card__thumb event-card__thumb--paris">
+              <img src="./assets/logos/compute_favicon.svg" alt="Compute! Karlsruhe #1">
+            </div>
+            <div class="event-card__body">
+              <div class="event-card__title">Compute! Karlsruhe #1</div>
+              <div class="event-card__meta">Nov 12 · Blue Yonder, Karlsruhe</div>
+              <span class="event-card__badge event-card__badge--past">Past</span>
+            </div>
+          </a>
         </div>
 
         <div class="sponsor-wall">
@@ -663,6 +667,30 @@
     </footer>
 
   </div>
+
+  <script>
+    // ── Badge and order events from their end date (data-end) ──
+    // Upcoming (soonest first), in discussion (no data-end), the TBA card, then past (most recent first).
+    (function () {
+      const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Paris' }); // YYYY-MM-DD
+      const block = document.querySelector('.events-block');
+      const cards = [...block.querySelectorAll('.event-card:not(.event-card--tba)')];
+      const dated = cards.filter(c => c.dataset.end);
+      const discussion = cards.filter(c => !c.dataset.end);
+      const upcoming = dated.filter(c => c.dataset.end >= today).sort((a, b) => a.dataset.end.localeCompare(b.dataset.end));
+      const past = dated.filter(c => c.dataset.end < today).sort((a, b) => b.dataset.end.localeCompare(a.dataset.end));
+      const setBadge = (card, kind, label) => {
+        const badge = card.querySelector('.event-card__badge');
+        badge.className = `event-card__badge event-card__badge--${kind}`;
+        badge.textContent = label;
+      };
+      upcoming.forEach(c => setBadge(c, 'upcoming', 'Upcoming'));
+      discussion.forEach(c => setBadge(c, 'discussion', 'In discussion'));
+      past.forEach(c => setBadge(c, 'past', 'Past'));
+      const tba = block.querySelector('.event-card--tba');
+      [...upcoming, ...discussion, tba, ...past].filter(Boolean).forEach(c => block.appendChild(c));
+    })();
+  </script>
 
   <script>
     // ── Add Mastodon accounts here — one per event (or the central account) ──
