@@ -291,25 +291,33 @@
     .event-card__badge--tentative { background: #f3ede2; color: #8a7a5a; }
     .event-card__badge--past     { background: #f0f0f0; color: var(--muted); }
 
-    /* Events wheel: room for ~5.5 cards, no visible scrollbar; edges fade and
+    /* Scroll "wheel" (events, supporters): no visible scrollbar; edges fade and
        small chevrons appear when there is more to scroll to. */
-    .events-wheel { position: relative; }
-    .events-list {
-      max-height: 620px;
+    .wheel { position: relative; }
+    .events-list { max-height: 620px; }
+    /* Wide screens: the sticky left sidebar fills the window, Events and Supporters half each */
+    @media (min-width: 1201px) {
+      .sidebar-left { height: calc(100vh - 110px); }
+      .events-block, .sponsor-wall { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; }
+      .sponsor-wall { margin-top: 24px; }
+      .events-block .wheel, .sponsor-wall .wheel { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+      .wheel .wheel__list { max-height: none; flex: 1; min-height: 0; }
+    }
+    .wheel__list {
       overflow-y: auto;
       scrollbar-width: none;
       overscroll-behavior: contain;
       scroll-behavior: smooth;
       padding: 2px 2px 0;
     }
-    .events-list::-webkit-scrollbar { display: none; }
-    .events-wheel.can-up .events-list   { -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 48px); mask-image: linear-gradient(to bottom, transparent 0, #000 48px); }
-    .events-wheel.can-down .events-list { -webkit-mask-image: linear-gradient(to top, transparent 0, #000 48px); mask-image: linear-gradient(to top, transparent 0, #000 48px); }
-    .events-wheel.can-up.can-down .events-list {
+    .wheel__list::-webkit-scrollbar { display: none; }
+    .wheel.can-up .wheel__list   { -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 48px); mask-image: linear-gradient(to bottom, transparent 0, #000 48px); }
+    .wheel.can-down .wheel__list { -webkit-mask-image: linear-gradient(to top, transparent 0, #000 48px); mask-image: linear-gradient(to top, transparent 0, #000 48px); }
+    .wheel.can-up.can-down .wheel__list {
       -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%);
       mask-image: linear-gradient(to bottom, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%);
     }
-    .events-wheel__arrow {
+    .wheel__arrow {
       position: absolute; left: 50%; z-index: 1;
       width: 28px; height: 18px; margin-left: -14px; padding: 0;
       display: flex; align-items: center; justify-content: center;
@@ -317,12 +325,12 @@
       color: var(--muted); opacity: 0; pointer-events: none;
       transition: opacity .2s, color .2s;
     }
-    .events-wheel__arrow svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-    .events-wheel__arrow:hover { color: var(--dark); }
-    .events-wheel__arrow--up   { top: -6px; }
-    .events-wheel__arrow--down { bottom: -2px; }
-    .events-wheel.can-up .events-wheel__arrow--up,
-    .events-wheel.can-down .events-wheel__arrow--down { opacity: 1; pointer-events: auto; }
+    .wheel__arrow svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .wheel__arrow:hover { color: var(--dark); }
+    .wheel__arrow--up   { top: -6px; }
+    .wheel__arrow--down { bottom: -2px; }
+    .wheel.can-up .wheel__arrow--up,
+    .wheel.can-down .wheel__arrow--down { opacity: 1; pointer-events: auto; }
 
     /* Timeline emphasis: the script sets --dim per card by distance from the next event. */
     .event-card { opacity: var(--dim, 1); transition: opacity .2s, box-shadow .2s, transform .2s, background .2s; }
@@ -335,6 +343,7 @@
     .event-card--planned:hover { box-shadow: none; transform: none; }
     .event-card--planned .event-card__thumb { opacity: .7; }
     .event-card--past { --dim: .6; }
+    .event-card--upcoming .event-card__accent { background: #3ba55c !important; }
     .event-card--past .event-card__thumb,
     .event-card--past .event-card__accent { filter: grayscale(1); }
 
@@ -504,9 +513,9 @@
                - Dated event: data-end="YYYY-MM-DD" (last day). Upcoming until then, Past after.
                - Not yet dated: data-status="planning" or "tentative", plus optional
                  data-approx="YYYY-MM" for its place on the timeline (no date = furthest out). -->
-          <div class="events-wheel">
-          <button class="events-wheel__arrow events-wheel__arrow--up" type="button" aria-label="Show later events"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button>
-          <div class="events-list">
+          <div class="wheel events-wheel">
+          <button class="wheel__arrow wheel__arrow--up" type="button" aria-label="Show later events"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button>
+          <div class="wheel__list events-list">
 
           <div class="event-card event-card--planned" data-status="tentative">
             <div class="event-card__thumb event-card__thumb--paris">
@@ -541,7 +550,7 @@
             </div>
           </div>
 
-          <a href="paris2026/" class="event-card" data-end="2026-11-26">
+          <a href="paris2026/" class="event-card event-card--upcoming" data-end="2026-11-26">
             <div class="event-card__accent" style="background:#F2C94C"></div>
             <div class="event-card__thumb event-card__thumb--paris">
               <img src="./assets/logos/compute_favicon.svg" alt="Compute! Paris 2026">
@@ -565,12 +574,15 @@
             </div>
           </a>
           </div>
-          <button class="events-wheel__arrow events-wheel__arrow--down" type="button" aria-label="Show earlier events"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+          <button class="wheel__arrow wheel__arrow--down" type="button" aria-label="Show earlier events"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
           </div>
         </div>
 
         <div class="sponsor-wall">
           <p class="section-label">Supporters</p>
+          <div class="wheel">
+          <button class="wheel__arrow wheel__arrow--up" type="button" aria-label="Scroll up"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button>
+          <div class="wheel__list">
           <div class="sponsor-wall__grid">
             <a href="https://quantstack.net/" class="sponsor-wall__logo" target="_blank" rel="noopener" aria-label="QuantStack">
               <img src="./assets/images/sponsors/quantstack.png" alt="QuantStack">
@@ -602,9 +614,12 @@
             <a href="https://systematic-paris-region.org/?lang=en" class="sponsor-wall__logo" target="_blank" rel="noopener" aria-label="Systematic Paris-Region">
               <img src="./assets/images/sponsors/Systematic_logo.png" alt="Systematic Paris-Region">
             </a>
-            <a href="https://zulip.com/" class="sponsor-wall__logo" class="sponsor-wall__logo" target="_blank" rel="noopener" aria-label="Zulip">
+            <a href="https://zulip.com/" class="sponsor-wall__logo" target="_blank" rel="noopener" aria-label="Zulip">
               <img src="./assets/images/sponsors/zulip-icon-circle.svg" alt="Zulip">
             </a>
+          </div>
+          </div>
+          <button class="wheel__arrow wheel__arrow--down" type="button" aria-label="Scroll down"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
           </div>
         </div>
 
@@ -760,9 +775,9 @@
         badge.textContent = label;
       };
       cards.forEach(c => {
-        c.classList.remove('event-card--past', 'event-card--planned');
+        c.classList.remove('event-card--past', 'event-card--planned', 'event-card--upcoming');
         if (c.dataset.end && c.dataset.end < today) { c.classList.add('event-card--past'); setBadge(c, 'past', 'Past'); }
-        else if (c.dataset.end) setBadge(c, 'upcoming', 'Upcoming');
+        else if (c.dataset.end) { c.classList.add('event-card--upcoming'); setBadge(c, 'upcoming', 'Upcoming'); }
         else if (c.dataset.status === 'tentative') { c.classList.add('event-card--planned'); setBadge(c, 'tentative', 'Tentative'); }
         else { c.classList.add('event-card--planned'); setBadge(c, 'planning', 'In planning'); }
       });
@@ -780,22 +795,27 @@
         block.appendChild(c);
       });
 
-      // Wheel: start centered on the next event; chevrons show when there is more above/below.
-      const update = () => {
-        wheel.classList.toggle('can-up', block.scrollTop > 2);
-        wheel.classList.toggle('can-down', block.scrollTop + block.clientHeight < block.scrollHeight - 2);
-      };
+      // Start the events wheel centered on the next event.
       const f = timeline[focus];
       block.style.scrollBehavior = 'auto';
       block.scrollTop = f.offsetTop - block.offsetTop - (block.clientHeight - f.offsetHeight) / 2;
       block.style.scrollBehavior = '';
-      block.addEventListener('scroll', update, { passive: true });
-      window.addEventListener('resize', update);
-      const step = dir => block.scrollBy({ top: dir * (f.offsetHeight + 8) });
-      wheel.querySelector('.events-wheel__arrow--up').addEventListener('click', () => step(-1));
-      wheel.querySelector('.events-wheel__arrow--down').addEventListener('click', () => step(1));
-      update();
     })();
+
+    // ── Scroll wheels (events, supporters): chevrons show when there is more above/below ──
+    document.querySelectorAll('.wheel').forEach(wheel => {
+      const list = wheel.querySelector('.wheel__list');
+      const update = () => {
+        wheel.classList.toggle('can-up', list.scrollTop > 2);
+        wheel.classList.toggle('can-down', list.scrollTop + list.clientHeight < list.scrollHeight - 2);
+      };
+      const step = dir => list.scrollBy({ top: dir * list.clientHeight * .6 });
+      list.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update);
+      wheel.querySelector('.wheel__arrow--up').addEventListener('click', () => step(-1));
+      wheel.querySelector('.wheel__arrow--down').addEventListener('click', () => step(1));
+      update();
+    });
   </script>
 
   <script>
