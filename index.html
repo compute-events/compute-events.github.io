@@ -274,8 +274,9 @@
       color: var(--mid);
       margin-top: 2px;
     }
-    .event-card__cta { font-size: .75rem; font-weight: 600; color: #8a6d1a; margin-top: 4px; }
-    .event-card__cta:hover, .event-card:hover .event-card__cta { text-decoration: underline; }
+    .event-card__status { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+    .event-card__cta { font-size: .72rem; color: var(--muted); transition: color .2s; }
+    .event-card:hover .event-card__cta { color: var(--dark); text-decoration: underline; }
 
     .event-card__badge {
       display: inline-block;
@@ -530,8 +531,7 @@
             <div class="event-card__body">
               <div class="event-card__title">Compute! Vietnam</div>
               <div class="event-card__meta">Date to be decided</div>
-              <div class="event-card__cta">Express interest →</div>
-              <span class="event-card__badge event-card__badge--tentative">Tentative</span>
+              <div class="event-card__status"><span class="event-card__badge event-card__badge--tentative">Tentative</span><span class="event-card__cta">Express interest →</span></div>
             </div>
           </a>
 
@@ -542,8 +542,7 @@
             <div class="event-card__body">
               <div class="event-card__title">Compute! India</div>
               <div class="event-card__meta">~April–May 2027 · Bengaluru or online</div>
-              <div class="event-card__cta">Express interest →</div>
-              <span class="event-card__badge event-card__badge--interest">Exploring</span>
+              <div class="event-card__status"><span class="event-card__badge event-card__badge--interest">Exploring</span><span class="event-card__cta">Express interest →</span></div>
             </div>
           </a>
 
@@ -554,8 +553,7 @@
             <div class="event-card__body">
               <div class="event-card__title">Compute! Barcelona</div>
               <div class="event-card__meta">~April 2027 · Meetup or conference</div>
-              <div class="event-card__cta">Express interest →</div>
-              <span class="event-card__badge event-card__badge--interest">Exploring</span>
+              <div class="event-card__status"><span class="event-card__badge event-card__badge--interest">Exploring</span><span class="event-card__cta">Express interest →</span></div>
             </div>
           </a>
 
