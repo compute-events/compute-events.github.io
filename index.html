@@ -291,6 +291,39 @@
     .event-card__badge--tentative { background: #f3ede2; color: #8a7a5a; }
     .event-card__badge--past     { background: #f0f0f0; color: var(--muted); }
 
+    /* Events wheel: room for ~5.5 cards, no visible scrollbar; edges fade and
+       small chevrons appear when there is more to scroll to. */
+    .events-wheel { position: relative; }
+    .events-list {
+      max-height: 620px;
+      overflow-y: auto;
+      scrollbar-width: none;
+      overscroll-behavior: contain;
+      scroll-behavior: smooth;
+      padding: 2px 2px 0;
+    }
+    .events-list::-webkit-scrollbar { display: none; }
+    .events-wheel.can-up .events-list   { -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 48px); mask-image: linear-gradient(to bottom, transparent 0, #000 48px); }
+    .events-wheel.can-down .events-list { -webkit-mask-image: linear-gradient(to top, transparent 0, #000 48px); mask-image: linear-gradient(to top, transparent 0, #000 48px); }
+    .events-wheel.can-up.can-down .events-list {
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%);
+      mask-image: linear-gradient(to bottom, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%);
+    }
+    .events-wheel__arrow {
+      position: absolute; left: 50%; z-index: 1;
+      width: 28px; height: 18px; margin-left: -14px; padding: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); opacity: 0; pointer-events: none;
+      transition: opacity .2s, color .2s;
+    }
+    .events-wheel__arrow svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .events-wheel__arrow:hover { color: var(--dark); }
+    .events-wheel__arrow--up   { top: -6px; }
+    .events-wheel__arrow--down { bottom: -2px; }
+    .events-wheel.can-up .events-wheel__arrow--up,
+    .events-wheel.can-down .events-wheel__arrow--down { opacity: 1; pointer-events: auto; }
+
     /* Timeline emphasis: the script sets --dim per card by distance from the next event. */
     .event-card { opacity: var(--dim, 1); transition: opacity .2s, box-shadow .2s, transform .2s, background .2s; }
     .event-card[href]:hover { opacity: 1; }
@@ -471,6 +504,10 @@
                - Dated event: data-end="YYYY-MM-DD" (last day). Upcoming until then, Past after.
                - Not yet dated: data-status="planning" or "tentative", plus optional
                  data-approx="YYYY-MM" for its place on the timeline (no date = furthest out). -->
+          <div class="events-wheel">
+          <button class="events-wheel__arrow events-wheel__arrow--up" type="button" aria-label="Show later events"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button>
+          <div class="events-list">
+
           <div class="event-card event-card--planned" data-status="tentative">
             <div class="event-card__thumb event-card__thumb--paris">
               <img src="./assets/logos/compute_favicon.svg" alt="Compute! Vietnam">
@@ -527,6 +564,9 @@
               <span class="event-card__badge event-card__badge--past">Past</span>
             </div>
           </a>
+          </div>
+          <button class="events-wheel__arrow events-wheel__arrow--down" type="button" aria-label="Show earlier events"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+          </div>
         </div>
 
         <div class="sponsor-wall">
@@ -709,7 +749,8 @@
     // Furthest future at the top, past at the bottom; the next event is brightest.
     (function () {
       const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Paris' }); // YYYY-MM-DD
-      const block = document.querySelector('.events-block');
+      const wheel = document.querySelector('.events-wheel');
+      const block = wheel.querySelector('.events-list');
       const cards = [...block.querySelectorAll('.event-card')];
       // Timeline key: the last day for dated events, the approximate month for planned ones.
       const key = c => c.dataset.end || (c.dataset.approx ? c.dataset.approx + '-15' : '9999-12-31');
@@ -730,10 +771,30 @@
       let focus = timeline.findLastIndex(c => key(c) >= today);
       if (focus < 0) focus = 0;
       timeline.forEach((c, i) => {
-        const dim = Math.max(.4, 1 - .18 * Math.abs(i - focus)) * (c.classList.contains('event-card--past') ? .75 : 1);
+        // Distance from the next event, then status: confirmed 1, in planning .75, tentative .6, past .75
+        const status = c.classList.contains('event-card--past') ? .75
+          : c.dataset.status === 'tentative' ? .6
+          : c.classList.contains('event-card--planned') ? .75 : 1;
+        const dim = Math.max(.4, 1 - .12 * Math.abs(i - focus)) * status;
         c.style.setProperty('--dim', dim.toFixed(2));
         block.appendChild(c);
       });
+
+      // Wheel: start centered on the next event; chevrons show when there is more above/below.
+      const update = () => {
+        wheel.classList.toggle('can-up', block.scrollTop > 2);
+        wheel.classList.toggle('can-down', block.scrollTop + block.clientHeight < block.scrollHeight - 2);
+      };
+      const f = timeline[focus];
+      block.style.scrollBehavior = 'auto';
+      block.scrollTop = f.offsetTop - block.offsetTop - (block.clientHeight - f.offsetHeight) / 2;
+      block.style.scrollBehavior = '';
+      block.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update);
+      const step = dir => block.scrollBy({ top: dir * (f.offsetHeight + 8) });
+      wheel.querySelector('.events-wheel__arrow--up').addEventListener('click', () => step(-1));
+      wheel.querySelector('.events-wheel__arrow--down').addEventListener('click', () => step(1));
+      update();
     })();
   </script>
 
