@@ -274,6 +274,8 @@
       color: var(--mid);
       margin-top: 2px;
     }
+    .event-card__cta { font-size: .75rem; font-weight: 600; color: #8a6d1a; margin-top: 4px; }
+    .event-card__cta:hover, .event-card:hover .event-card__cta { text-decoration: underline; }
 
     .event-card__badge {
       display: inline-block;
@@ -288,6 +290,7 @@
     .event-card__badge--upcoming { background: #e8f4e8; color: #2a7a2a; }
     .event-card__badge--tba      { background: #eee; color: var(--muted); }
     .event-card__badge--planning { background: #fdf3d8; color: #8a6d1a; }
+    .event-card__badge--interest { background: #fdf3d8; color: #8a6d1a; }
     .event-card__badge--tentative { background: #f3ede2; color: #8a7a5a; }
     .event-card__badge--past     { background: #f0f0f0; color: var(--muted); }
 
@@ -295,12 +298,16 @@
        small chevrons appear when there is more to scroll to. */
     .wheel { position: relative; }
     .events-list { max-height: 620px; }
-    /* Wide screens: the sticky left sidebar fills the window, Events and Supporters half each */
+    /* Wide screens: both sticky sidebars fill the window. Left: Events and Supporters half each;
+       right: the post feed. Each scrolls on its own */
     @media (min-width: 1201px) {
       .sidebar-left { height: calc(100vh - 110px); }
       .events-block, .sponsor-wall { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; }
       .sponsor-wall { margin-top: 24px; }
+      .sidebar-right { height: calc(100vh - 110px); display: flex; flex-direction: column; }
+      .mastodon { flex: 1; min-height: 0; display: flex; flex-direction: column; }
       .events-block .wheel, .sponsor-wall .wheel { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+      .mastodon .wheel { flex: 1; min-height: 0; display: flex; flex-direction: column; }
       .wheel .wheel__list { max-height: none; flex: 1; min-height: 0; }
     }
     .wheel__list {
@@ -338,7 +345,6 @@
     .event-card--planned {
       border-style: dashed;
       border-color: rgba(0,0,0,.12);
-      cursor: default;
     }
     .event-card--planned:hover { box-shadow: none; transform: none; }
     .event-card--planned .event-card__thumb { opacity: .7; }
@@ -511,44 +517,47 @@
                timeline: furthest future at the top, past at the bottom. The event closest to
                today is brightest, and cards fade with distance from it in both directions.
                - Dated event: data-end="YYYY-MM-DD" (last day). Upcoming until then, Past after.
-               - Not yet dated: data-status="planning" or "tentative", plus optional
+               - Not yet dated: data-status="interest" (Exploring), "planning" (In planning) or "tentative", plus optional
                  data-approx="YYYY-MM" for its place on the timeline (no date = furthest out). -->
           <div class="wheel events-wheel">
           <button class="wheel__arrow wheel__arrow--up" type="button" aria-label="Show later events"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button>
           <div class="wheel__list events-list">
 
-          <div class="event-card event-card--planned" data-status="tentative">
+          <a href="mailto:contact@compute.events?subject=Compute!%20Vietnam" class="event-card event-card--planned" data-status="tentative">
             <div class="event-card__thumb event-card__thumb--paris">
               <img src="./assets/logos/compute_favicon.svg" alt="Compute! Vietnam">
             </div>
             <div class="event-card__body">
               <div class="event-card__title">Compute! Vietnam</div>
               <div class="event-card__meta">Date to be decided</div>
+              <div class="event-card__cta">Express interest →</div>
               <span class="event-card__badge event-card__badge--tentative">Tentative</span>
             </div>
-          </div>
+          </a>
 
-          <div class="event-card event-card--planned" data-status="planning" data-approx="2027-05">
+          <a href="mailto:contact@compute.events?subject=Compute!%20India" class="event-card event-card--planned" data-status="interest" data-approx="2027-05">
             <div class="event-card__thumb event-card__thumb--paris">
               <img src="./assets/logos/compute_favicon.svg" alt="Compute! India">
             </div>
             <div class="event-card__body">
               <div class="event-card__title">Compute! India</div>
               <div class="event-card__meta">~April–May 2027 · Bengaluru or online</div>
-              <span class="event-card__badge event-card__badge--planning">In planning</span>
+              <div class="event-card__cta">Express interest →</div>
+              <span class="event-card__badge event-card__badge--interest">Exploring</span>
             </div>
-          </div>
+          </a>
 
-          <div class="event-card event-card--planned" data-status="planning" data-approx="2027-04">
+          <a href="mailto:contact@compute.events?subject=Compute!%20Barcelona" class="event-card event-card--planned" data-status="interest" data-approx="2027-04">
             <div class="event-card__thumb event-card__thumb--paris">
               <img src="./assets/logos/compute_favicon.svg" alt="Compute! Barcelona">
             </div>
             <div class="event-card__body">
               <div class="event-card__title">Compute! Barcelona</div>
               <div class="event-card__meta">~April 2027 · Meetup or conference</div>
-              <span class="event-card__badge event-card__badge--planning">In planning</span>
+              <div class="event-card__cta">Express interest →</div>
+              <span class="event-card__badge event-card__badge--interest">Exploring</span>
             </div>
-          </div>
+          </a>
 
           <a href="paris2026/" class="event-card event-card--upcoming" data-end="2026-11-26">
             <div class="event-card__accent" style="background:#F2C94C"></div>
@@ -629,8 +638,14 @@
       <aside class="sidebar-right">
         <div class="mastodon">
           <p class="section-label">Latest posts</p>
+          <div class="wheel">
+          <button class="wheel__arrow wheel__arrow--up" type="button" aria-label="Scroll up"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button>
+          <div class="wheel__list">
           <div class="mastodon-feed" id="mastodon-feed">
             <div class="toot toot--loading">Loading…</div>
+          </div>
+          </div>
+          <button class="wheel__arrow wheel__arrow--down" type="button" aria-label="Scroll down"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
           </div>
         </div>
       </aside>
@@ -779,6 +794,7 @@
         if (c.dataset.end && c.dataset.end < today) { c.classList.add('event-card--past'); setBadge(c, 'past', 'Past'); }
         else if (c.dataset.end) { c.classList.add('event-card--upcoming'); setBadge(c, 'upcoming', 'Upcoming'); }
         else if (c.dataset.status === 'tentative') { c.classList.add('event-card--planned'); setBadge(c, 'tentative', 'Tentative'); }
+        else if (c.dataset.status === 'interest') { c.classList.add('event-card--planned'); setBadge(c, 'interest', 'Exploring'); }
         else { c.classList.add('event-card--planned'); setBadge(c, 'planning', 'In planning'); }
       });
       const timeline = cards.sort((a, b) => key(b).localeCompare(key(a))); // future → past
@@ -786,9 +802,10 @@
       let focus = timeline.findLastIndex(c => key(c) >= today);
       if (focus < 0) focus = 0;
       timeline.forEach((c, i) => {
-        // Distance from the next event, then status: confirmed 1, in planning .75, tentative .6, past .75
+        // Distance from the next event, then status: confirmed 1, in planning .75, exploring .7, tentative .6, past .75
         const status = c.classList.contains('event-card--past') ? .75
           : c.dataset.status === 'tentative' ? .6
+          : c.dataset.status === 'interest' ? .7
           : c.classList.contains('event-card--planned') ? .75 : 1;
         const dim = Math.max(.4, 1 - .12 * Math.abs(i - focus)) * status;
         c.style.setProperty('--dim', dim.toFixed(2));
@@ -811,7 +828,10 @@
       };
       const step = dir => list.scrollBy({ top: dir * list.clientHeight * .6 });
       list.addEventListener('scroll', update, { passive: true });
-      window.addEventListener('resize', update);
+      // Re-check when the content changes size (e.g. the post feed loads after the page)
+      const ro = new ResizeObserver(update);
+      ro.observe(list);
+      [...list.children].forEach(ch => ro.observe(ch));
       wheel.querySelector('.wheel__arrow--up').addEventListener('click', () => step(-1));
       wheel.querySelector('.wheel__arrow--down').addEventListener('click', () => step(1));
       update();
